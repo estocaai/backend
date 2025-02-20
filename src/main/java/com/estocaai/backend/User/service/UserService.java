@@ -37,8 +37,7 @@ public class UserService {
         return ResponseEntity.ok(loginToken + " " + user.getId());
     }
 
-    public User createUser(String email, String password) {
-        // Verifica se já existe um usuário com o email informado
+    public User createUser(String email, String password, String name) {
         if (userRepository.findByEmail(email) != null) {
             throw new IllegalArgumentException("Conta com o email " + email + " já existe!");
         }
@@ -50,6 +49,7 @@ public class UserService {
         User user = new User();
         user.setEmail(email);
         user.setPassword(hashedPassword);
+        user.setName(name);
 
         // Salva o usuário no repositório
         userRepository.save(user);
