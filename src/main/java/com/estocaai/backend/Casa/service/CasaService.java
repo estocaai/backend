@@ -61,21 +61,18 @@ public class CasaService {
         String usuarioId = userService.getUsuarioIdFromToken(token);
         casa.setUsuarioId(usuarioId);
 
-        // 1. Salvar a casa primeiro para garantir um ID
         Casa novaCasa = casaRepository.save(casa);
 
         if (novaCasa.getId() == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao gerar ID da casa.");
         }
 
-        // 2. Criar e salvar despensa e lista de compras separadamente
         Despensa despensa = new Despensa(novaCasa.getId());
         despensa = despensaRepository.save(despensa);
 
         ListaDeCompras listaDeCompras = new ListaDeCompras(novaCasa.getId());
         listaDeCompras = listaDeComprasRepository.save(listaDeCompras);
 
-        // 3. Atualizar a casa com os IDs das referências
         novaCasa.setDespensaId(despensa.getId());
         novaCasa.setListaDeComprasId(listaDeCompras.getId());
 
