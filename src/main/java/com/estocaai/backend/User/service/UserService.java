@@ -37,16 +37,26 @@ public class UserService {
         return ResponseEntity.ok(loginToken + " " + user.getId());
     }
 
-    public User createUser(String email, String password, String name) {
+    public User createUser(String email, String password) {
+        // Verifica se já existe um usuário com o email informado
+        if (userRepository.findByEmail(email) != null) {
+            throw new IllegalArgumentException("Conta com o email " + email + " já existe!");
+        }
+
+        // Cria o hash da senha
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
+
+        // Cria e popula o objeto User
         User user = new User();
         user.setEmail(email);
         user.setPassword(hashedPassword);
-        user.setName(name);
-        user.setFotoPerfil(null);
+
+        // Salva o usuário no repositório
         userRepository.save(user);
+
         return user;
     }
+
 
     public void logout(String token) {
         Optional<User> userOpt = userRepository.findByToken(token);
