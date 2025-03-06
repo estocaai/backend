@@ -22,6 +22,16 @@ public class ProdutoController {
         return produtoService.listarTodos(token);
     }
 
+    @GetMapping("/paginado")
+    public ResponseEntity<?> listarTodosPaginado(
+            @RequestHeader(value = "Authorization") String token,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "search", defaultValue = "") String search
+    ) {
+        return produtoService.listarTodosPaginado(token, page, size, search);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable String id,
                                          @RequestHeader(value = "Authorization") String token) {

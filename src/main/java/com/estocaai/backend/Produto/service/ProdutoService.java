@@ -6,6 +6,9 @@ import com.estocaai.backend.User.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +34,23 @@ public class ProdutoService {
         }
         List<Produto> produtos = produtoRepository.findAll();
         return ResponseEntity.ok(produtos);
+    }
+
+    public ResponseEntity<?> listarTodosPaginado(String token, int page, int size, String search) {
+        if (isTokenInvalido(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido ou ausente!");
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Produto> produtosPaginados;
+        if (search == null || search.trim().isEmpty()) {
+            produtosPaginados = produtoRepository.findAll(pageable);
+        } else {
+            produtosPaginados = produtoRepository.findByNomeContainingIgnoreCase(search, pageable);
+        }
+
+        return ResponseEntity.ok(produtosPaginados);
     }
 
     public ResponseEntity<?> buscarPorId(String id, String token) {
