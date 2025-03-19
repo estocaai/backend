@@ -84,8 +84,6 @@ public class CasaService {
         return ResponseEntity.status(HttpStatus.CREATED).body(novaCasa);
     }
 
-
-
     public ResponseEntity<?> atualizarCasa(String casaId, Casa casaAtualizada, String token) {
         if (isTokenInvalido(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido ou ausente!");
@@ -110,6 +108,16 @@ public class CasaService {
         if (isTokenInvalido(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido ou ausente!");
         }
+        
+        // Exclui a despensa associada à casa
+        Optional<Despensa> despensaOpt = despensaRepository.findByCasaId(casaId);
+        despensaOpt.ifPresent(despensaRepository::delete);
+
+        // Exclui a lista de compras associada à casa
+        Optional<ListaDeCompras> listaOpt = listaDeComprasRepository.findByCasaId(casaId);
+        listaOpt.ifPresent(listaDeComprasRepository::delete);
+
+        // Exclui a casa
         casaRepository.deleteById(casaId);
         return ResponseEntity.noContent().build();
     }
