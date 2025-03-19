@@ -38,7 +38,7 @@ public class UserService {
     }
 
     public User createUser(String email, String password, String name) {
-        if (userRepository.findByEmail(email) != null) {
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Conta com o email " + email + " já existe!");
         }
 
